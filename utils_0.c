@@ -6,7 +6,7 @@
 /*   By: boodeer <boodeer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 20:44:29 by boodeer           #+#    #+#             */
-/*   Updated: 2021/10/31 00:03:05 by boodeer          ###   ########.fr       */
+/*   Updated: 2021/11/04 12:08:52 by boodeer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	error_message(char *error_str, int error_code)
 	return (error_code);
 }
 
-void	print_philo(t_philo data)
+void	print_philo(t_data data)
 {
 	printf("%d\n", data.philo_nb);
 	printf("%d\n", data.t_td);
@@ -61,6 +61,10 @@ int		ft_atoi(const char *c)
 	return ((int)(res * signe));
 }
 
+/* Checks if the input data is correct i.e:
+	- no alpha characters.
+	...
+*/
 int		check_data(char **av)
 {
 	int		i;
@@ -77,15 +81,23 @@ int		check_data(char **av)
 	return (0);
 }
 
-t_philo fill_data(char **data, int data_nb)
+/* Fill the t_data structure with the received input */
+t_data *fill_data(char **data, int data_nb)
 {
-	t_philo philo;
+	t_data *philo;
 
-	philo.philo_nb = ft_atoi(data[0]);
-	philo.t_td = ft_atoi(data[1]);
-	philo.t_te = ft_atoi(data[2]);
-	philo.t_ts = ft_atoi(data[3]);
+	philo = (t_data *)malloc(sizeof(t_data));
+	philo->philo_nb = ft_atoi(data[0]);
+	philo->t_td = ft_atoi(data[1]);
+	philo->t_te = ft_atoi(data[2]);
+	philo->t_ts = ft_atoi(data[3]);
 	if (data_nb == 6)
-		philo.rds = ft_atoi(data[4]);
+		philo->rds = ft_atoi(data[4]);
+	else
+		philo->rds = -2;
+	// check overflow before continuing to the next line.
+	philo->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+	* philo->philo_nb);
+	pthread_mutex_init(&philo->quil, NULL);
 	return (philo);
 }
