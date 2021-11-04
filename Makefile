@@ -1,4 +1,4 @@
-CC		= gcc
+CC		= gcc -pthread
 FLAGS	=
 SRC		= philo.c utils_0.c
 NAME	= philo
