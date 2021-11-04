@@ -6,7 +6,7 @@
 /*   By: boodeer <boodeer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 20:44:29 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/04 12:08:52 by boodeer          ###   ########.fr       */
+/*   Updated: 2021/11/04 14:59:27 by boodeer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,11 @@ t_data *fill_data(char **data, int data_nb)
 	// check overflow before continuing to the next line.
 	philo->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 	* philo->philo_nb);
+
+	// initialize the writing mutex
 	pthread_mutex_init(&philo->quil, NULL);
+	// initialize the forks 
+	for (int i = 0; i < philo->philo_nb; i++)
+		pthread_mutex_init(&(philo->forks[i]), NULL);
 	return (philo);
 }
