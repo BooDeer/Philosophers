@@ -6,7 +6,7 @@
 /*   By: boodeer <boodeer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/04 12:32:03 by boodeer          ###   ########.fr       */
+/*   Updated: 2021/11/04 15:19:51 by boodeer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 void	*routine_test(void *data)
 {
 	t_philo *philo = (t_philo *)data;
+
+	
 	pthread_mutex_lock(&philo->data->quil);
-	write(1, "123123123213213213123\n", 22);
-	write(1, "tesasdlaspdqwdlpqwdpp\n", 22);
+	pthread_mutex_lock(philo->data->forks[philo->id - 1]);
+	pthread_mutex_lock(philo->data->forks[philo->id % philo->data->philo_nb ]);
 	pthread_mutex_unlock(&philo->data->quil);
 }
 
@@ -60,6 +62,7 @@ int	main(int ac, char **av)
 	for (int i = 0; i != data->philo_nb; i++)
 	{
 		pthread_join(philos[i].p, NULL);
+		usleep(100);
 	}
 	return (0);
 }
