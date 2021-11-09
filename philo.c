@@ -6,7 +6,7 @@
 /*   By: boodeer <boodeer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/04 15:19:51 by boodeer          ###   ########.fr       */
+/*   Updated: 2021/11/08 11:23:48 by boodeer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,11 @@ void	*routine_test(void *data)
 
 	
 	pthread_mutex_lock(&philo->data->quil);
-	pthread_mutex_lock(philo->data->forks[philo->id - 1]);
-	pthread_mutex_lock(philo->data->forks[philo->id % philo->data->philo_nb ]);
+	pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
+	pthread_mutex_lock(&philo->data->forks[philo->id % philo->data->philo_nb]);
+	printf("Philo: %d is eating\n", philo->id);
+	pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
+	pthread_mutex_unlock(&philo->data->forks[philo->id % philo->data->philo_nb]);
 	pthread_mutex_unlock(&philo->data->quil);
 }
 
