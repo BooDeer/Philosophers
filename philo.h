@@ -13,22 +13,32 @@
 # define COLORS_DEFAULT "\033[0;0m"
 # define COLORS_RED "\033[031m"
 
-
+/* States of philosopher  */
+# define PH_EAT "is eating"
+# define PH_FORK "has taken a fork"
+# define PH_SLEEP "is sleeping"
+# define PH_THINK "is thinking"
+# define PH_DIE "died"
+# define EAT_T philo->data->t_te
+# define SLEEP_T philo->data->t_ts
+# define QUILL_MTX philo->data->quill
 typedef	struct s_data
 {
 	int	philo_nb;
-	int	t_td;
-	int	t_te;
-	int	t_ts;
-	int	rds;
+	int	t_td; // time to die
+	int	t_te; // time to eat
+	int	t_ts; // time to sleep
+	int	rds; // number of time to eat
 	pthread_mutex_t *forks;
-	pthread_mutex_t quil;
+	pthread_mutex_t quill;
+	pthread_mutex_t t_fork;
 }			t_data;
 
 typedef struct s_philo
 {
-	int	id;
-	int	l_ate;
+	int	id; // philo id (1-[Number of philos])
+	int	s_time; // start_time (start of the simulation / time last startd eating)
+	int	t_ate; // (how many times the philosopher ate) 
 	pthread_t p;
 	t_data *data;
 }			t_philo;
@@ -39,6 +49,6 @@ int		ft_isdigit(int c);
 int		ft_atoi(const char *c);
 int		check_data(char **av);
 t_data *fill_data(char **data, int data_nb);
-
+size_t	ft_strlen(const char *str);
 
 #endif
