@@ -6,7 +6,7 @@
 /*   By: hboudhir <hboudhir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/16 03:45:21 by hboudhir         ###   ########.fr       */
+/*   Updated: 2021/11/16 06:26:36 by hboudhir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,11 @@ void	*routine_test(void *data)
 		// pthread_mutex_unlock(&philo->data->t_fork);
 		// Output the log activity
 		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
-		philo->status = 1;
 		log_activity(philo->id, PH_EAT, &QUILL_MTX, S_TIME);
 		philo->s_time = ft_curr_time();
 		// Eating
 		ft_usleep(EAT_T);
 		// Incrementing the eating times
-		philo->status = 0;
 		philo->t_ate++;
 		// Releasing the forks
 		pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
@@ -88,7 +86,6 @@ t_philo *set_philos(t_data *data)
 		philo[i].data = data;
 		philo[i].s_time = -2;
 		philo[i].t_ate = 0;
-		philo[i].status = 0;
 	}
 	return (philo);
 }
