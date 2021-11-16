@@ -6,7 +6,7 @@
 /*   By: hboudhir <hboudhir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/16 02:17:36 by hboudhir         ###   ########.fr       */
+/*   Updated: 2021/11/16 03:45:21 by hboudhir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,23 @@ void	*routine_test(void *data)
 	int	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&philo->data->t_fork);
+		// pthread_mutex_lock(&philo->data->t_fork);
 		// Locking the fork of [id - 1]
 		pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
 		// Output the log activity
 		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
 		// Locking the fork of [id % philo_nb] 
 		pthread_mutex_lock(&philo->data->forks[philo->id % philo->data->philo_nb]);
-		pthread_mutex_unlock(&philo->data->t_fork);
+		// pthread_mutex_unlock(&philo->data->t_fork);
 		// Output the log activity
 		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
+		philo->status = 1;
 		log_activity(philo->id, PH_EAT, &QUILL_MTX, S_TIME);
 		philo->s_time = ft_curr_time();
 		// Eating
 		ft_usleep(EAT_T);
 		// Incrementing the eating times
+		philo->status = 0;
 		philo->t_ate++;
 		// Releasing the forks
 		pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
@@ -86,6 +88,7 @@ t_philo *set_philos(t_data *data)
 		philo[i].data = data;
 		philo[i].s_time = -2;
 		philo[i].t_ate = 0;
+		philo[i].status = 0;
 	}
 	return (philo);
 }
@@ -104,10 +107,25 @@ void	first_round_time(t_philo *philos, int end)
 void	start_simulation(t_data *data, t_philo *philos)
 {
 	struct timeval	tv;
-	
+	int				i;
+
+	i = 0;
 	first_round_time(philos, data->philo_nb);
-	for (int i = 0; i != data->philo_nb; i++)
+	while (i < data->philo_nb)
+	{
 		pthread_create(&(philos[i].p), NULL, &routine_test, &philos[i]);
+		i += 2;
+	}
+	usleep(800);
+	i = 1;
+	while (i < data->philo_nb)
+	{
+		pthread_create(&(philos[i].p), NULL, &routine_test, &philos[i]);
+		i += 2;
+	}
+	// for (int i = 0; i != data->philo_nb; i++)
+		// pthread_create(&(philos[i].p), NULL, &routine_test, &philos[i]);
+	
 }
 
 int	supervisor(t_data *data, t_philo *philos)
@@ -123,7 +141,7 @@ int	supervisor(t_data *data, t_philo *philos)
 		{
 			// if ((philos[i].s_time - ft_curr_time()) - data->t_td > 0)
 			// printf("[Time to die]: %d\n",philos[i].s_time - ft_curr_time());
-			if (data->t_td - (ft_curr_time() - philos[i].s_time ) < 0)
+			if ( data->t_td - (ft_curr_time() - philos[i].s_time ) < 0)
 			{
 				printf("NIGGA: %d DIED because: %d passed\n",i + 1, (philos[i].s_time - data->s_point));
 				return (2);
