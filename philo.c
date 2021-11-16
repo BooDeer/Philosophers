@@ -6,7 +6,7 @@
 /*   By: hboudhir <hboudhir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/12 23:09:06 by hboudhir         ###   ########.fr       */
+/*   Updated: 2021/11/16 02:17:36 by hboudhir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-void	log_activity(int id, char *activity, pthread_mutex_t *quill)
+void	log_activity(int id, char *activity, pthread_mutex_t *quill, int s_time)
 {
 	pthread_mutex_lock(quill);
-	printf("%d %d %s\n", ft_curr_time(), id, activity);
+	printf("%d %d %s\n", ft_curr_time() - s_time, id, activity);
 	pthread_mutex_unlock(quill);
 }
 void	*routine_test(void *data)
@@ -44,18 +44,30 @@ void	*routine_test(void *data)
 	while (1)
 	{
 		pthread_mutex_lock(&philo->data->t_fork);
+		// Locking the fork of [id - 1]
 		pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
-		log_activity(philo->id, PH_FORK, &QUILL_MTX);
+		// Output the log activity
+		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
+		// Locking the fork of [id % philo_nb] 
 		pthread_mutex_lock(&philo->data->forks[philo->id % philo->data->philo_nb]);
 		pthread_mutex_unlock(&philo->data->t_fork);
-		log_activity(philo->id, PH_FORK, &QUILL_MTX);
-		log_activity(philo->id, PH_EAT, &QUILL_MTX);
-		usleep(EAT_T);
-		log_activity(philo->id, PH_SLEEP, &QUILL_MTX);
-		usleep(SLEEP_T);
-		log_activity(philo->id, PH_THINK, &QUILL_MTX);
+		// Output the log activity
+		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
+		log_activity(philo->id, PH_EAT, &QUILL_MTX, S_TIME);
+		philo->s_time = ft_curr_time();
+		// Eating
+		ft_usleep(EAT_T);
+		// Incrementing the eating times
+		philo->t_ate++;
+		// Releasing the forks
 		pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
 		pthread_mutex_unlock(&philo->data->forks[philo->id % philo->data->philo_nb]);
+		// Output the log activity
+		log_activity(philo->id, PH_SLEEP, &QUILL_MTX, S_TIME);
+		// Sleeping
+		ft_usleep(SLEEP_T);
+		// Thinking
+		log_activity(philo->id, PH_THINK, &QUILL_MTX, S_TIME);
 	}
 	return (NULL);
 }
@@ -84,6 +96,7 @@ void	first_round_time(t_philo *philos, int end)
 	int	i;
 
 	i = -1;
+	philos[0].data->s_point = ft_curr_time();
 	while (++i < end)
 		philos[i].s_time = ft_curr_time();
 }
@@ -104,7 +117,23 @@ int	supervisor(t_data *data, t_philo *philos)
 
 	while (1)
 	{
-		
+		i = -1;
+		count = 0;
+		while (++i < data->philo_nb)
+		{
+			// if ((philos[i].s_time - ft_curr_time()) - data->t_td > 0)
+			// printf("[Time to die]: %d\n",philos[i].s_time - ft_curr_time());
+			if (data->t_td - (ft_curr_time() - philos[i].s_time ) < 0)
+			{
+				printf("NIGGA: %d DIED because: %d passed\n",i + 1, (philos[i].s_time - data->s_point));
+				return (2);
+			}
+			if (data->rds > 0 && philos[i].t_ate >= data->rds)
+				count++;
+			if (count >= data->philo_nb)
+				return (1);
+		}
+		usleep(200);
 	}
 }
 
@@ -130,7 +159,8 @@ int	main(int ac, char **av)
 	philos = set_philos(data);
 	// the threads loop
 	start_simulation(data, philos);
-	supervisor(data, philos);
+	if (supervisor(data, philos))
+		return (0);
 	for (int i = 0; i != data->philo_nb; i++)
 	{
 		pthread_join(philos[i].p, NULL);
