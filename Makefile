@@ -1,6 +1,6 @@
 CC		= gcc
 FLAGS	=  -pthread -g
-SRC		= philo.c utils_0.c
+SRC		= philo.c utils_0.c utils_1.c
 NAME	= philo
 
 all: $(NAME)
