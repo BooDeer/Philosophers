@@ -22,6 +22,7 @@
 # define EAT_T philo->data->t_te
 # define SLEEP_T philo->data->t_ts
 # define QUILL_MTX philo->data->quill
+# define S_TIME philo->data->s_point
 typedef	struct s_data
 {
 	int	philo_nb;
@@ -29,6 +30,7 @@ typedef	struct s_data
 	int	t_te; // time to eat
 	int	t_ts; // time to sleep
 	int	rds; // number of time to eat
+	int	s_point; // initial date (To be substracted)
 	pthread_mutex_t *forks;
 	pthread_mutex_t quill;
 	pthread_mutex_t t_fork;
@@ -38,7 +40,7 @@ typedef struct s_philo
 {
 	int	id; // philo id (1-[Number of philos])
 	int	s_time; // start_time (start of the simulation / time last startd eating)
-	int	t_ate; // (how many times the philosopher ate) 
+	int	t_ate; // (how many times the philosopher ate)
 	pthread_t p;
 	t_data *data;
 }			t_philo;
@@ -50,5 +52,7 @@ int		ft_atoi(const char *c);
 int		check_data(char **av);
 t_data *fill_data(char **data, int data_nb);
 size_t	ft_strlen(const char *str);
+int		ft_curr_time(void);
+void	ft_usleep(long long sleep_time);
 
 #endif
