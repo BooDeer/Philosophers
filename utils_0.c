@@ -6,7 +6,7 @@
 /*   By: hboudhir <hboudhir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 20:44:29 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/12 07:00:25 by hboudhir         ###   ########.fr       */
+/*   Updated: 2021/11/16 09:12:41 by hboudhir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ int	error_message(char *error_str, int error_code)
 	return (error_code);
 }
 
-void	print_philo(t_data data)
+void	print_philo(t_data *data)
 {
-	printf("%d\n", data.philo_nb);
-	printf("%d\n", data.t_td);
-	printf("%d\n", data.t_te);
-	printf("%d\n", data.t_ts);
+	printf("%d\n", data->philo_nb);
+	printf("%d\n", data->t_td);
+	printf("%d\n", data->t_te);
+	printf("%d\n", data->t_ts);
 }
 
 int		ft_isdigit(int c)
@@ -101,7 +101,7 @@ t_data *fill_data(char **data, int data_nb)
 
 	// initialize the writing mutex
 	pthread_mutex_init(&philo->quill, NULL);
-	pthread_mutex_init(&philo->t_fork, NULL);
+	pthread_mutex_init(&philo->eat, NULL);
 	// initialize the forks 
 	for (int i = 0; i < philo->philo_nb; i++)
 		pthread_mutex_init(&(philo->forks[i]), NULL);

@@ -6,7 +6,7 @@
 /*   By: hboudhir <hboudhir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 18:16:41 by boodeer           #+#    #+#             */
-/*   Updated: 2021/11/16 06:26:36 by hboudhir         ###   ########.fr       */
+/*   Updated: 2021/11/17 03:40:11 by hboudhir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,13 @@ void	*routine_test(void *data)
 	int	i = 0;
 	while (1)
 	{
-		// pthread_mutex_lock(&philo->data->t_fork);
 		// Locking the fork of [id - 1]
+		
 		pthread_mutex_lock(&philo->data->forks[philo->id - 1]);
 		// Output the log activity
 		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
 		// Locking the fork of [id % philo_nb] 
 		pthread_mutex_lock(&philo->data->forks[philo->id % philo->data->philo_nb]);
-		// pthread_mutex_unlock(&philo->data->t_fork);
 		// Output the log activity
 		log_activity(philo->id, PH_FORK, &QUILL_MTX, S_TIME);
 		log_activity(philo->id, PH_EAT, &QUILL_MTX, S_TIME);
@@ -98,7 +97,7 @@ void	first_round_time(t_philo *philos, int end)
 	i = -1;
 	philos[0].data->s_point = ft_curr_time();
 	while (++i < end)
-		philos[i].s_time = ft_curr_time();
+		philos[i].s_time = philos[0].data->s_point;
 }
 
 void	start_simulation(t_data *data, t_philo *philos)
@@ -113,7 +112,7 @@ void	start_simulation(t_data *data, t_philo *philos)
 		pthread_create(&(philos[i].p), NULL, &routine_test, &philos[i]);
 		i += 2;
 	}
-	usleep(800);
+	ft_usleep(20);
 	i = 1;
 	while (i < data->philo_nb)
 	{

@@ -33,7 +33,7 @@ typedef	struct s_data
 	int	s_point; // initial date (To be substracted)
 	pthread_mutex_t *forks;
 	pthread_mutex_t quill;
-	pthread_mutex_t t_fork;
+	pthread_mutex_t eat;
 }			t_data;
 
 typedef struct s_philo
@@ -46,7 +46,7 @@ typedef struct s_philo
 }			t_philo;
 
 int	error_message(char *error_str, int error_code);
-void	print_philo(t_data data);
+void	print_philo(t_data *data);
 int		ft_isdigit(int c);
 int		ft_atoi(const char *c);
 int		check_data(char **av);
