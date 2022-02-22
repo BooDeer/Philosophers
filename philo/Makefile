@@ -1,6 +1,6 @@
 CC		= gcc
-FLAGS	=  -pthread -g
-SRC		= philo.c utils_0.c utils_1.c
+FLAGS	= -pthread -Wall -Wextra -Werror
+SRC		= philo.c utils_0.c utils_1.c utils_2.c
 NAME	= philo
 
 all: $(NAME)
